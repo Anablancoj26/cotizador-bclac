@@ -305,16 +305,16 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">Tipo de Material / Filamento (Proveedor — Marca)</label>
+                            <label id="material-select-label" class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">Tipo de Material / Filamento (Proveedor — Marca)</label>
                             <select id="select-material" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-medium" onchange="calculateQuote()">
                                 <!-- Opciones generadas dinámicamente -->
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">Gramos Consumidos (por unidad)</label>
+                            <label id="material-amount-label" class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">Gramos Consumidos (por unidad)</label>
                             <div class="relative">
-                                <input type="number" id="material-grams" value="0" min="0" step="0.5" placeholder="0" class="w-full pl-3.5 pr-16 py-2.5 text-sm font-mono-num font-semibold bg-slate-50 dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" oninput="calculateQuote()">
-                                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-medium">gramos</span>
+                                <input type="number" id="material-grams" value="0" min="0" step="0.5" placeholder="0" class="w-full pl-3.5 pr-20 py-2.5 text-sm font-mono-num font-semibold bg-slate-50 dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" oninput="calculateQuote()">
+                                <span id="material-unit-badge" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-medium">gramos</span>
                             </div>
                         </div>
                     </div>
@@ -643,7 +643,7 @@
 
                     <div class="flex justify-end">
                         <button onclick="restoreDefaultMaterials()" class="text-xs underline font-semibold text-indigo-500 hover:text-indigo-400">
-                            Restaurar los 13 materiales de la tabla
+                            Restaurar los 14 materiales (Filamentos y Resina)
                         </button>
                     </div>
 
@@ -664,7 +664,7 @@
     <script>
         const STORAGE_KEYS = {
             MACHINES: 'cotizador3d_machines_v4',
-            MATERIALS: 'cotizador3d_materials_v3',
+            MATERIALS: 'cotizador3d_materials_v4',
             RATES: 'cotizador3d_rates_v2',
             PROJECT: 'cotizador3d_project_v2',
             THEME: 'cotizador3d_theme_v1',
@@ -681,19 +681,22 @@
         ];
 
         const DEFAULT_MATERIALS = [
-            { id: 'mat_1', name: 'PLA — Didácticas Electrónicas (Genérico)', provider: 'DIDACTICAS ELECTRONICAS', material: 'PLA', brand: 'GENERICO', spoolGrams: 1000, spoolPrice: 105000, wastePercent: 30 },
-            { id: 'mat_2', name: 'TPU — Didácticas Electrónicas (Genérico 800g)', provider: 'DIDACTICAS ELECTRONICAS', material: 'TPU', brand: 'GENERICO', spoolGrams: 800, spoolPrice: 139000, wastePercent: 30 },
-            { id: 'mat_3', name: 'PET-G — Didácticas Electrónicas (eSUN)', provider: 'DIDACTICAS ELECTRONICAS', material: 'PET-G', brand: 'ESUN', spoolGrams: 1000, spoolPrice: 89000, wastePercent: 30 },
-            { id: 'mat_4', name: 'ABS — Didácticas Electrónicas (Genérico)', provider: 'DIDACTICAS ELECTRONICAS', material: 'ABS', brand: 'GENERICO', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
-            { id: 'mat_5', name: 'NYLON — Didácticas Electrónicas (Genérico)', provider: 'DIDACTICAS ELECTRONICAS', material: 'NYLON', brand: 'GENERICO', spoolGrams: 1000, spoolPrice: 191000, wastePercent: 30 },
-            { id: 'mat_6', name: 'PLA — Home Center (eSUN)', provider: 'HOME CENTER', material: 'PLA', brand: 'ESUN', spoolGrams: 1000, spoolPrice: 120000, wastePercent: 30 },
-            { id: 'mat_7', name: 'PLA — Home Center (4D-LAB)', provider: 'HOME CENTER', material: 'PLA', brand: '4D-LAB', spoolGrams: 1000, spoolPrice: 85000, wastePercent: 30 },
-            { id: 'mat_8', name: 'PLA — Polymaster (Polymaster)', provider: 'POLYMASTER', material: 'PLA', brand: 'POLYMASTER', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
-            { id: 'mat_9', name: 'PET-G — Polymaster (Polymaster)', provider: 'POLYMASTER', material: 'PET-G', brand: 'POLYMASTER', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
-            { id: 'mat_10', name: 'ABS — 4D-LAB (4D-LAB)', provider: '4D-LAB', material: 'ABS', brand: '4D-LAB', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
-            { id: 'mat_11', name: 'PET-G — 4D-LAB (4D-LAB)', provider: '4D-LAB', material: 'PET-G', brand: '4D-LAB', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
-            { id: 'mat_12', name: 'PLA — 4D-LAB (4D-LAB)', provider: '4D-LAB', material: 'PLA', brand: '4D-LAB', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
-            { id: 'mat_13', name: 'PP — 4D-LAB (4D-LAB)', provider: '4D-LAB', material: 'PP', brand: '4D-LAB', spoolGrams: 1000, spoolPrice: 85000, wastePercent: 30 }
+            // 1. Filamentos ordenados por tipo y de menor a mayor valor
+            { id: 'mat_1', category: 'Filamento', name: 'PLA — Polymaster (Polymaster)', provider: 'POLYMASTER', material: 'PLA', brand: 'POLYMASTER', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
+            { id: 'mat_2', category: 'Filamento', name: 'PLA — 4D-LAB (4D-LAB)', provider: '4D-LAB', material: 'PLA', brand: '4D-LAB', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
+            { id: 'mat_3', category: 'Filamento', name: 'PLA — Home Center (4D-LAB)', provider: 'HOME CENTER', material: 'PLA', brand: '4D-LAB', spoolGrams: 1000, spoolPrice: 85000, wastePercent: 30 },
+            { id: 'mat_4', category: 'Filamento', name: 'PLA — Didácticas Electrónicas (Genérico)', provider: 'DIDACTICAS ELECTRONICAS', material: 'PLA', brand: 'GENERICO', spoolGrams: 1000, spoolPrice: 105000, wastePercent: 30 },
+            { id: 'mat_5', category: 'Filamento', name: 'PLA — Home Center (eSUN)', provider: 'HOME CENTER', material: 'PLA', brand: 'ESUN', spoolGrams: 1000, spoolPrice: 120000, wastePercent: 30 },
+            { id: 'mat_6', category: 'Filamento', name: 'PET-G — Polymaster (Polymaster)', provider: 'POLYMASTER', material: 'PET-G', brand: 'POLYMASTER', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
+            { id: 'mat_7', category: 'Filamento', name: 'PET-G — 4D-LAB (4D-LAB)', provider: '4D-LAB', material: 'PET-G', brand: '4D-LAB', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
+            { id: 'mat_8', category: 'Filamento', name: 'PET-G — Didácticas Electrónicas (eSUN)', provider: 'DIDACTICAS ELECTRONICAS', material: 'PET-G', brand: 'ESUN', spoolGrams: 1000, spoolPrice: 89000, wastePercent: 30 },
+            { id: 'mat_9', category: 'Filamento', name: 'ABS — Didácticas Electrónicas (Genérico)', provider: 'DIDACTICAS ELECTRONICAS', material: 'ABS', brand: 'GENERICO', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
+            { id: 'mat_10', category: 'Filamento', name: 'ABS — 4D-LAB (4D-LAB)', provider: '4D-LAB', material: 'ABS', brand: '4D-LAB', spoolGrams: 1000, spoolPrice: 80000, wastePercent: 30 },
+            { id: 'mat_11', category: 'Filamento', name: 'PP — 4D-LAB (4D-LAB)', provider: '4D-LAB', material: 'PP', brand: '4D-LAB', spoolGrams: 1000, spoolPrice: 85000, wastePercent: 30 },
+            { id: 'mat_12', category: 'Filamento', name: 'TPU — Didácticas Electrónicas (Genérico 800g)', provider: 'DIDACTICAS ELECTRONICAS', material: 'TPU', brand: 'GENERICO', spoolGrams: 800, spoolPrice: 139000, wastePercent: 30 },
+            { id: 'mat_13', category: 'Filamento', name: 'NYLON — Didácticas Electrónicas (Genérico)', provider: 'DIDACTICAS ELECTRONICAS', material: 'NYLON', brand: 'GENERICO', spoolGrams: 1000, spoolPrice: 191000, wastePercent: 30 },
+            // 2. Resinas (6.6 lbs = 3000 ml)
+            { id: 'mat_14', category: 'Resina', name: 'Resina Estándar Curado Rápido LCD/DLP/SLA (6.6 lbs)', provider: 'ESTANDAR', material: 'RESINA', brand: 'LCD/DLP/SLA', spoolGrams: 3000, spoolPrice: 209857, wastePercent: 30 }
         ];
 
         const DEFAULT_RATES = {
@@ -868,15 +871,26 @@
 
             const materialSelect = document.getElementById('select-material');
             const currentMaterial = materialSelect.value;
-            materialSelect.innerHTML = [
-                `<option value="none">Ninguno ($0/g — Sin material)</option>`,
-                ...state.materials.map(mat => {
-                    const grams = mat.spoolGrams || 1000;
-                    const price = mat.spoolPrice ?? mat.pricePerKg ?? 0;
-                    const perGram = price / grams;
-                    return `<option value="${mat.id}">${mat.name} — ${formatCOP(perGram)}/g (${formatCOP(price)} / ${grams}g)</option>`;
-                })
-            ].join('');
+            const filaments = state.materials.filter(m => m.category !== 'Resina');
+            const resins = state.materials.filter(m => m.category === 'Resina');
+
+            const formatMatOpt = (mat) => {
+                const amount = mat.spoolGrams || 1000;
+                const price = mat.spoolPrice ?? mat.pricePerKg ?? 0;
+                const unit = mat.category === 'Resina' ? 'ml' : 'g';
+                const perUnit = price / amount;
+                return `<option value="${mat.id}">${mat.name} — ${formatCOP(perUnit)}/${unit} (${formatCOP(price)} / ${amount}${unit})</option>`;
+            };
+
+            let matOptionsHtml = `<option value="none">Ninguno ($0 — Sin material)</option>`;
+            if (filaments.length > 0) {
+                matOptionsHtml += `<optgroup label="1. Filamentos (Ordenados por tipo y valor)">${filaments.map(formatMatOpt).join('')}</optgroup>`;
+            }
+            if (resins.length > 0) {
+                matOptionsHtml += `<optgroup label="2. Resinas (LCD / DLP / SLA)">${resins.map(formatMatOpt).join('')}</optgroup>`;
+            }
+            materialSelect.innerHTML = matOptionsHtml;
+
             if (currentMaterial === 'none' || state.materials.some(mat => mat.id === currentMaterial)) {
                 materialSelect.value = currentMaterial || 'none';
             } else {
@@ -931,8 +945,30 @@
         function calculateQuote() {
             const machineId = document.getElementById('select-machine').value;
             const machine = machineId === 'none'
-                ? { id: 'none', name: 'Ninguno', watts: 0, depreciationPerHour: 0 }
-                : (state.machines.find(m => m.id === machineId) || { id: 'none', name: 'Ninguno', watts: 0, depreciationPerHour: 0 });
+                ? { id: 'none', category: 'FDM', name: 'Ninguno', watts: 0, depreciationPerHour: 0 }
+                : (state.machines.find(m => m.id === machineId) || { id: 'none', category: 'FDM', name: 'Ninguno', watts: 0, depreciationPerHour: 0 });
+
+            const isResin = machine.category === 'Resina';
+            const unitShort = isResin ? 'ml' : 'g';
+            const unitLong = isResin ? 'mililitros (ml)' : 'gramos';
+
+            // Actualizar etiquetas dinámicas según si es impresora de Resina (ml) o Filamento (g)
+            const matSelectLabel = document.getElementById('material-select-label');
+            const matAmountLabel = document.getElementById('material-amount-label');
+            const matUnitBadge = document.getElementById('material-unit-badge');
+            if (matSelectLabel) {
+                matSelectLabel.textContent = isResin
+                    ? 'Tipo de Resina (LCD / DLP / SLA)'
+                    : 'Tipo de Material / Filamento (Proveedor — Marca)';
+            }
+            if (matAmountLabel) {
+                matAmountLabel.textContent = isResin
+                    ? 'Mililitros Consumidos (por unidad)'
+                    : 'Gramos Consumidos (por unidad)';
+            }
+            if (matUnitBadge) {
+                matUnitBadge.textContent = unitLong;
+            }
 
             const machineBadge = document.getElementById('machine-specs-badge');
             const costPerHourEnergy = (machine.watts / 1000) * state.rates.kwhCost;
@@ -940,6 +976,7 @@
                 <span><i class="fa-solid fa-bolt text-amber-500 mr-1"></i>Consumo: <strong>${machine.watts} W</strong> (${formatCOP(costPerHourEnergy)}/h luz)</span>
                 <span>•</span>
                 <span><i class="fa-solid fa-wrench text-cyan-500 mr-1"></i>Amortización Máx: <strong>${formatCOP(machine.depreciationPerHour)}/h</strong></span>
+                ${isResin ? `<span>•</span><span class="text-purple-500 font-semibold"><i class="fa-solid fa-flask mr-1"></i>Cálculo en ml</span>` : ''}
             `;
 
             const materialId = document.getElementById('select-material').value;
@@ -980,8 +1017,8 @@
 
             const materialBadge = document.getElementById('material-specs-badge');
             materialBadge.innerHTML = `
-                <span>Costo base: <strong class="text-slate-700 dark:text-slate-200 font-mono-num">${formatCOP(costPerGram)}/g</strong> (${formatCOP(spoolPrice)} / ${spoolGrams}g)</span>
-                <span class="text-rose-500 dark:text-rose-400 font-medium"><i class="fa-solid fa-recycle mr-1"></i>+${wastePct}% desperdicio: <strong class="font-mono-num">${gramsPerUnit.toFixed(1)}g + ${wasteGramsPerUnit.toFixed(1)}g = ${effectiveGramsPerUnit.toFixed(1)}g / u</strong></span>
+                <span>Costo base: <strong class="text-slate-700 dark:text-slate-200 font-mono-num">${formatCOP(costPerGram)}/${unitShort}</strong> (${formatCOP(spoolPrice)} / ${spoolGrams}${unitShort})</span>
+                <span class="text-rose-500 dark:text-rose-400 font-medium"><i class="fa-solid fa-recycle mr-1"></i>+${wastePct}% desperdicio: <strong class="font-mono-num">${gramsPerUnit.toFixed(1)}${unitShort} + ${wasteGramsPerUnit.toFixed(1)}${unitShort} = ${effectiveGramsPerUnit.toFixed(1)}${unitShort} / u</strong></span>
             `;
 
             const designHoursVal = Math.max(0, parseFloat(document.getElementById('design-hours').value) || 0);
@@ -1023,7 +1060,7 @@
             document.getElementById('unit-client-price').textContent = formatCOP(finalClientUnit);
             document.getElementById('net-profit-amount').textContent = formatCOP(netProfit);
 
-            document.getElementById('breakdown-material-info').textContent = `(${Math.round(totalBaseGramsBatch)}g + ${wastePct}% = ${Math.round(totalGramsBatch)}g)`;
+            document.getElementById('breakdown-material-info').textContent = `(${Math.round(totalBaseGramsBatch)}${unitShort} + ${wastePct}% = ${Math.round(totalGramsBatch)}${unitShort})`;
             document.getElementById('cost-material').textContent = formatCOP(totalMaterialCost);
 
             const energyLabelExtra = curingApplies && curingKwhBatch > 0 ? ` — incl. ${curingKwhBatch.toFixed(3)} curado` : '';
@@ -1413,7 +1450,7 @@
             state.materials = JSON.parse(JSON.stringify(DEFAULT_MATERIALS));
             saveToStorage();
             renderMaterialsEditor();
-            showToast('13 materiales restaurados', 'info');
+            showToast('14 materiales (Filamentos y Resina) restaurados', 'info');
         }
 
         function addNewMaterial() {
